@@ -3,45 +3,38 @@ import { GraffitiLocal } from "@graffiti-garden/implementation-local";
 import { GraffitiRemote } from "@graffiti-garden/implementation-remote";
 import { GraffitiPlugin } from "@graffiti-garden/wrapper-vue";
 
-const channels = ["designftw"];
-
 createApp({
   data() {
     return {
       myMessage: "",
-      sentMessageObjects: [],
-      messageObjects: [],
+      sending: false,
+      channels: ["designftw"],
     };
   },
 
   methods: {
-    sendMessage(session) {
-      this.sentMessageObjects.push({
-        value: {
-          content: this.myMessage,
-          published: Date.now(),
+    async sendMessage(session) {
+      if (!this.myMessage) return;
+
+      this.sending = true;
+
+      await this.$graffiti.put(
+        {
+          value: {
+            content: this.myMessage,
+            published: Date.now(),
+          },
+          channels: this.channels,
         },
-        channels,
-      });
-    },
+        session,
+      );
 
-    getMessages() {
-      const messageObjectsIterator = this.getMessageObjectsIterator();
+      this.sending = false;
+      this.myMessage = "";
 
-      const newMessageObjects = [];
-      for (const { object } of messageObjectsIterator) {
-        newMessageObjects.push(object);
-      }
-
-      // Sort here
-
-      this.messageObjects = newMessageObjects;
-    },
-
-    *getMessageObjectsIterator() {
-      for (const object of this.sentMessageObjects) {
-        yield { object };
-      }
+      // Refocus the input field after sending the message
+      await this.$nextTick();
+      this.$refs.messageInput.focus();
     },
   },
 })

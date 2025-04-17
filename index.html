@@ -27,23 +27,55 @@
                     Log Out
                 </button>
                 <form @submit.prevent="sendMessage($graffitiSession.value)">
-                    <input
-                        type="text"
-                        v-model="myMessage"
-                        placeholder="Message"
-                    />
-                    <input type="submit" value="Send" />
+                    <fieldset :disabled="sending">
+                        <input
+                            type="text"
+                            v-model="myMessage"
+                            placeholder="Message"
+                            ref="messageInput"
+                            v-focus
+                        />
+                        <input
+                            type="submit"
+                            :value="sending? 'Sending...' : 'Send'"
+                        />
+                    </fieldset>
                 </form>
             </template>
 
             <h2>Messages</h2>
 
-            <button @click="getMessages()">Refresh messages</button>
-            <ul>
-                <li v-for="object of messageObjects">
-                    {{ object.value.content }}
-                </li>
-            </ul>
+            <graffiti-discover
+                v-slot="{ objects: messageObjects, isInitialPolling }"
+                :channels="channels"
+                :schema="{
+                    properties: {
+                        value: {
+                            required: ['content', 'published'],
+                            properties: {
+                                content: { type: 'string' },
+                                published: { type: 'number' }
+                            }
+                        }
+                    }
+                }"
+            >
+                <ul>
+                    <li v-if="isInitialPolling">Loading...</li>
+                    <li
+                        v-for="object of messageObjects.sort((a, b) => b.value.published - a.value.published)"
+                        :key="object.url"
+                    >
+                        <strong>
+                            {{ object.actor }}<span
+                                v-if="object.actor===$graffitiSession.value.actor"
+                            >
+                                (you)</span
+                            ></strong
+                        >: {{ object.value.content }}
+                    </li>
+                </ul>
+            </graffiti-discover>
         </div>
 
         <script src="index.js" type="module"></script>
