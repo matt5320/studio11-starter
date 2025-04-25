@@ -1,24 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Routing</title>
-        <script type="importmap">
-            {
-                "imports": {
-                    "vue": "https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.esm-browser.js",
-                    "vue-router": "https://cdn.jsdelivr.net/npm/vue-router@4.5.0/dist/vue-router.esm-browser.prod.js"
-                }
-            }
-        </script>
-    </head>
-    <body>
-        <div id="app">
-            <h1>Routing</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Routing</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.esm-browser.js",
+          "vue-router": "https://cdn.jsdelivr.net/npm/vue-router@4.5.0/dist/vue-router.esm-browser.prod.js"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header
+        style="display: flex; align-items: end; gap: 2rem; margin: 1rem 0"
+      >
+        <h1 style="margin: 0">
+          <router-link to="/">Routing</router-link>
+        </h1>
+        <router-link to="/profile">Profile</router-link>
+      </header>
 
-            <chat-list></chat-list>
-        </div>
-        <script src="index.js" type="module"></script>
-    </body>
+      <router-view></router-view>
+    </div>
+    <script src="index.js" type="module"></script>
+  </body>
 </html>
